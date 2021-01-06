@@ -1,2 +1,8 @@
 # TheCat
-mouse Controller
+키보드로 마우스를 제어하기위해 만든프로그램입니다. 
+
+# 사용 라이브러리
+- jnativehook-2.1.0
+
+
+미완성
