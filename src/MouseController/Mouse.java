@@ -41,25 +41,35 @@ public class Mouse {
 		isRight= false;
 		
 		MoveRowCurrentSpeed= 0;
-		MoveSpeed=0.1;
+		MoveSpeed=1.2;
 		MaxMoveSpeed= 10.0;
 	}
 	
 	public void update() {
 		
-		if(isMoving) 
+		if(Direction!= DIR.NONE) {
+			
+			if(MaxMoveSpeed>=MoveRowCurrentSpeed) {
+				MoveRowCurrentSpeed= MaxMoveSpeed;
+			}else {
+				MoveRowCurrentSpeed+=MoveSpeed;
+			}
+			
 			switch(Direction) {
 				case Up:
-				
 					break;
 				case UpRight:
 					break;
 				case Right:
+					mouseX+=MoveRowCurrentSpeed;
 					break;
 				case DownRight:
 					break;
 				default:
 					break;
+			}
+		}else {
+			MoveRowCurrentSpeed=0;
 		}
 	}
 

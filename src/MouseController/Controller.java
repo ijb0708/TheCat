@@ -13,15 +13,19 @@ import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseListener;
 
 
-public class Controller implements NativeKeyListener, NativeMouseListener {
+public class Controller implements NativeKeyListener, NativeMouseListener, Runnable {
 	
 	private boolean mouseUse;
 	private Mouse mouse;
+	private Robot robot;
 	
-	public Controller() {
+	public Controller() throws AWTException {
 		
 		mouseUse= false;
-		mouse = new Mouse();
+		mouse= new Mouse();
+		robot= new Robot();
+		
+		new Thread(this).start();
 		
 		try {
 			GlobalScreen.registerNativeHook();
@@ -32,6 +36,18 @@ public class Controller implements NativeKeyListener, NativeMouseListener {
 		
 		GlobalScreen.addNativeKeyListener(this);
 		GlobalScreen.addNativeMouseListener(this);
+	}
+	
+	@Override
+	public void run() {
+		while(true) {
+			if(mouseUse) {
+				mouse.update();
+				robot.mouseMove(mouse.getX(), mouse.getY());
+			}
+			System.out.println(mouse.getX() + " : " + mouse.getY());
+		}
+		
 	}
 
 	@Override
@@ -56,18 +72,21 @@ public class Controller implements NativeKeyListener, NativeMouseListener {
 	public void nativeKeyPressed(NativeKeyEvent e) {
 		
 		int key = e.getKeyCode();
-		Robot robot = null;
-		try {
-			robot = new Robot();
-		} catch (AWTException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		switch(key) {
+			case NativeKeyEvent.VC_0:
+				if (this.mouseUse == true) {
+					mouseUse= false;
+				}else {
+					mouseUse= true;
+				}
+				
+				System.out.println("mouseuse: " + mouseUse);
+				break;
 			case NativeKeyEvent.VC_UP:
 				break;
 			case NativeKeyEvent.VC_RIGHT:
+				
 				break;
 			case NativeKeyEvent.VC_DOWN:
 				break;
@@ -83,16 +102,14 @@ public class Controller implements NativeKeyListener, NativeMouseListener {
 		
 		System.out.println("keyup : " + key);
 		
-		robot.mouseMove(mouse.getX(), mouse.getY());
-		
 	}
 
 	@Override
 	public void nativeKeyReleased(NativeKeyEvent arg0) {
 		// TODO Auto-generated method stub
 	}
-
+	
 	@Override
-	public void nativeKeyTyped(NativeKeyEvent arg0) {
+	public void nativeKeyTyped(NativeKeyEvent e) {
 	}
 }
