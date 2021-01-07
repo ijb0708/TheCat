@@ -2,24 +2,68 @@ package MouseController;
 
 public class Mouse {
 	
-	//¸¶¿ì½º ½Ì±ÛÅæ
-	private static Mouse mouse = new Mouse();
-	
-	public static Mouse getInstance() {
-		return mouse;
+	public enum DIR {
+		Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft, NONE
 	}
 	
 	//x, y ÁÂÇ¥ ¹× º»ÄÚµå
 	private static final int basicX= 150;
 	private static final int basicY= 150;
 	
+	private boolean isMoving;
+	
+	private boolean isUp;
+	private boolean isDown;
+	private boolean isLeft;
+	private boolean isRight;
+	
 	private int mouseX;
 	private int mouseY;
 	
-	private Mouse() {
+	private double MaxMoveSpeed;
+	private double MoveRowCurrentSpeed;
+	private double MoveColumnCurrentSpeed;
+	private double MoveSpeed;
+	private DIR Direction;
+	
+	public Mouse() {
+		
 		mouseX= basicX;
 		mouseY= basicY;
+		
+		Direction = DIR.NONE;
+		
+		isMoving=false;
+		
+		isUp= false;
+		isDown= false;
+		isLeft= false;
+		isRight= false;
+		
+		MoveRowCurrentSpeed= 0;
+		MoveSpeed=0.1;
+		MaxMoveSpeed= 10.0;
 	}
+	
+	public void update() {
+		
+		if(isMoving) 
+			switch(Direction) {
+				case Up:
+				
+					break;
+				case UpRight:
+					break;
+				case Right:
+					break;
+				case DownRight:
+					break;
+				default:
+					break;
+		}
+	}
+
+	
 	
 	public void setXY(int mouseX, int mouseY) {
 		this.mouseX= mouseX;
