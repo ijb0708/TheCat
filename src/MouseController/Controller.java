@@ -3,7 +3,6 @@ package MouseController;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.lang.annotation.Native;
 
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
@@ -17,13 +16,11 @@ public class Controller implements NativeKeyListener, NativeMouseListener, Runna
 	
 	private boolean mouseUse;
 	private Mouse mouse;
-	private Robot robot;
 	
 	public Controller() throws AWTException {
 		
 		mouseUse= false;
 		mouse= new Mouse();
-		robot= new Robot();
 		
 		new Thread(this).start();
 		
@@ -40,19 +37,39 @@ public class Controller implements NativeKeyListener, NativeMouseListener, Runna
 	
 	@Override
 	public void run() {
-		while(true) {
-			if(mouseUse) {
-				mouse.update();
-				robot.mouseMove(mouse.getX(), mouse.getY());
-			}
-			System.out.println(mouse.getX() + " : " + mouse.getY());
-		}
+	
+		final double updateMax =60.0;
+		final double oneSecond =1000000000;
 		
+		long preT =System.nanoTime();
+		long nowT;
+		
+		double delta =0;
+		
+		while(true) {
+			
+			nowT = System.nanoTime();
+			delta += (nowT - preT) * updateMax;
+			preT =nowT;
+			
+			if(delta>=oneSecond) {
+				mouse.update();
+				delta-=oneSecond;
+			}
+		
+			try {
+				Thread.sleep(2);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			mouse.draw();
+		}
 	}
 
 	@Override
 	public void nativeMouseClicked(NativeMouseEvent arg0) {
-		// TODO Auto-generated method stub
+		// TODO Auto-gen000erated method stub
 		
 	}
 
@@ -75,38 +92,57 @@ public class Controller implements NativeKeyListener, NativeMouseListener, Runna
 		
 		switch(key) {
 			case NativeKeyEvent.VC_0:
-				if (this.mouseUse == true) {
-					mouseUse= false;
+				if (mouse.isUse == true) {
+					mouse.isUse =false;
 				}else {
-					mouseUse= true;
-				}
-				
-				System.out.println("mouseuse: " + mouseUse);
+					mouse.isUse =true;
+				}			
 				break;
 			case NativeKeyEvent.VC_UP:
+				mouse.isUp=true;
 				break;
 			case NativeKeyEvent.VC_RIGHT:
-				
+				mouse.isRight=true;
 				break;
 			case NativeKeyEvent.VC_DOWN:
+				mouse.isDown=true;
 				break;
 			case NativeKeyEvent.VC_LEFT:
-				break;
-			case NativeKeyEvent.VC_C:
-				robot.mousePress(InputEvent.BUTTON1_MASK);
-				break;
+				mouse.isLeft=true; break;	
+				
 			case NativeKeyEvent.VC_Z:
-				robot.mouseRelease(InputEvent.BUTTON1_MASK);
+				mouse.isLeftPress =true;
 				break;
-		}
-		
-		System.out.println("keyup : " + key);
-		
+			case NativeKeyEvent.VC_X:
+				break;
+		}	
 	}
+	
 
 	@Override
-	public void nativeKeyReleased(NativeKeyEvent arg0) {
-		// TODO Auto-generated method stub
+	public void nativeKeyReleased(NativeKeyEvent e) {
+		int key = e.getKeyCode();
+
+		switch(key) {
+			case NativeKeyEvent.VC_UP:
+				mouse.isUp=false;
+				break;
+			case NativeKeyEvent.VC_RIGHT:
+				mouse.isRight=false;
+				break;
+			case NativeKeyEvent.VC_DOWN:
+				mouse.isDown=false;
+				break;
+			case NativeKeyEvent.VC_LEFT:
+				mouse.isLeft=false;
+				break;
+
+			case NativeKeyEvent.VC_Z:
+				mouse.isLeftPress =false;
+				break;
+			case NativeKeyEvent.VC_X:
+				break;
+		}
 	}
 	
 	@Override

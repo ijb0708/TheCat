@@ -12,7 +12,6 @@ public class StartMain {
 			try {
 				new Controller();
 			} catch (AWTException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
